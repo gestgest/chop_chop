@@ -8,7 +8,7 @@ public class LocationExit : MonoBehaviour
 	[SerializeField] private GameSceneSO _locationToLoad = default;
 	[SerializeField] private PathSO _leadsToPath = default;
 	[SerializeField] private PathStorageSO _pathStorage = default; //This is where the last path taken will be stored
-
+	
 	[Header("Broadcasting on")]
 	[SerializeField] private LoadEventChannelSO _locationExitLoadChannel = default;
 

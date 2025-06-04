@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using DG.Tweening;
 
+//이미지를 페이드 인 / 아웃
 public class FadeController : MonoBehaviour
 {
 	[SerializeField] private FadeChannelSO _fadeChannelSO;

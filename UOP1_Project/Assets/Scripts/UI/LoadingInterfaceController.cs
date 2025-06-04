@@ -20,6 +20,7 @@ public class LoadingInterfaceController : MonoBehaviour
 
 	private void ToggleLoadingScreen(bool state)
 	{
+		//Debug.Log(_loadingInterface.name);
 		_loadingInterface.SetActive(state);
 	}
 }

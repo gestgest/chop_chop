@@ -17,9 +17,9 @@ public class UIMenuManager : MonoBehaviour
 
 	[Header("Broadcasting on")]
 	[SerializeField]
-	private VoidEventChannelSO _startNewGameEvent = default;
+	private VoidEventChannelSO _startNewGameEvent = default; //from StartGame.cs
 	[SerializeField]
-	private VoidEventChannelSO _continueGameEvent = default;
+	private VoidEventChannelSO _continueGameEvent = default; //from StartGame.cs
 
 
 
@@ -28,7 +28,7 @@ public class UIMenuManager : MonoBehaviour
 	private IEnumerator Start()
 	{
 		_inputReader.EnableMenuInput();
-		yield return new WaitForSeconds(0.4f); //waiting time for all scenes to be loaded 
+		yield return new WaitForSeconds(0.4f); //waiting time for all scenes to be loaded
 		SetMenuScreen();
 	}
 	void SetMenuScreen()

@@ -6,14 +6,15 @@ using UnityEngine;
 public class QuestSO : SerializableScriptableObject
 {
 	[SerializeField]
-	private int _idQuest = 0;
+	private int _idQuest = 0; //퀘스트 아이디
+
 	[Tooltip("The collection of Steps composing the Quest")]
 	[SerializeField]
-	private List<StepSO> _steps = new List<StepSO>();
+	private List<StepSO> _steps = new List<StepSO>(); //여러개의 서브퀘스트
 	[SerializeField]
-	bool _isDone = false;
+	bool _isDone = false; //퀘스트를 끝냈는지
 	[SerializeField]
-	VoidEventChannelSO _endQuestEvent = default;
+	VoidEventChannelSO _endQuestEvent = default; //끝나면 나오는 이벤트
 
 	public int IdQuest => _idQuest;
 	public List<StepSO> Steps => _steps;
@@ -22,8 +23,10 @@ public class QuestSO : SerializableScriptableObject
 		get => _isDone;
 		set => _isDone = value;
 	}
-	public VoidEventChannelSO EndQuestEvent => _endQuestEvent; 
-	public void FinishQuest()
+	public VoidEventChannelSO EndQuestEvent => _endQuestEvent;
+
+	//퀘스트가 끝났다면
+	public void FinishQuest() 
 	{
 		_isDone = true;
 		if(_endQuestEvent != null)

@@ -10,11 +10,16 @@ public class LoadEventChannelSO : DescriptionBaseSO
 {
 	public UnityAction<GameSceneSO, bool, bool> OnLoadingRequested;
 
+	//로딩 함수
 	public void RaiseEvent(GameSceneSO locationToLoad, bool showLoadingScreen = false, bool fadeScreen = false)
 	{
 		if (OnLoadingRequested != null)
 		{
+			//그러니까 대충 OnLoadingRequested = 씬 실행 함수;를 public으로 함 [awake?]
+			//
+			//씬이 하나 로딩될때마다 이 함수가 실행
 			OnLoadingRequested.Invoke(locationToLoad, showLoadingScreen, fadeScreen);
+			//Debug.Log(locationToLoad);
 		}
 		else
 		{

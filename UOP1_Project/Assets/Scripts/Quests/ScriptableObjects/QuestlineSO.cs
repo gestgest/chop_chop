@@ -18,12 +18,12 @@ public class QuestlineSO : SerializableScriptableObject
 	public List<QuestSO> Quests => _quests;
 
 	public VoidEventChannelSO EndQuestlineEvent => _endQuestlineEvent;
-	public bool IsDone
+	public bool IsDone //끝났는지
 	{
 		get => _isDone;
 		set => _isDone = value;
 	}
-	public void FinishQuestline()
+	public void FinishQuestline() //종합 퀘스트가 끝난 경우
 	{
 		if(_endQuestlineEvent!=null)
 		{ _endQuestlineEvent.RaiseEvent();  }

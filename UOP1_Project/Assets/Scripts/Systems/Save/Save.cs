@@ -43,7 +43,7 @@ public class Save
 		return JsonUtility.ToJson(this);
 	}
 
-	public void LoadFromJson(string json)
+	public void LoadFromJson(string json) //문자열 형태인 json파일을 가져와서 변환
 	{
 		JsonUtility.FromJsonOverwrite(json, this);
 	}

@@ -30,7 +30,7 @@ public class AudioManager : MonoBehaviour
 	[SerializeField] private float _sfxVolume = 1f;
 
 	private SoundEmitterVault _soundEmitterVault;
-	private SoundEmitter _musicSoundEmitter;
+	private SoundEmitter _musicSoundEmitter; //뮤직 오디오 소스
 
 	private void Awake()
 	{
@@ -43,17 +43,19 @@ public class AudioManager : MonoBehaviour
 
 	private void OnEnable()
 	{
+		//SFX 이벤트(함수) 설정 [시작, 멈출때, 끝낼때]
+		//delegate, 즉 _SFXEventChannel의 함수에 PlayAudioCue함수 내용을 넣는다.
 		_SFXEventChannel.OnAudioCuePlayRequested += PlayAudioCue;
 		_SFXEventChannel.OnAudioCueStopRequested += StopAudioCue;
 		_SFXEventChannel.OnAudioCueFinishRequested += FinishAudioCue;
 
+		//Music 이벤트 설정
 		_musicEventChannel.OnAudioCuePlayRequested += PlayMusicTrack;
 		_musicEventChannel.OnAudioCueStopRequested += StopMusic;
 
 		_masterVolumeEventChannel.OnEventRaised += ChangeMasterVolume;
 		_musicVolumeEventChannel.OnEventRaised += ChangeMusicVolume;
 		_SFXVolumeEventChannel.OnEventRaised += ChangeSFXVolume;
-
 	}
 
 	private void OnDestroy()
@@ -72,6 +74,7 @@ public class AudioManager : MonoBehaviour
 	/// <summary>
 	/// This is only used in the Editor, to debug volumes.
 	/// It is called when any of the variables is changed, and will directly change the value of the volumes on the AudioMixer.
+	/// 유니티 에디터상[inspector]에서 값이 바뀐 경우에 실행
 	/// </summary>
 	void OnValidate()
 	{
@@ -131,6 +134,7 @@ public class AudioManager : MonoBehaviour
 		return (normalizedValue - 1f) * 80f;
 	}
 
+	//음악 틀어주는 함수
 	private AudioCueKey PlayMusicTrack(AudioCueSO audioCue, AudioConfigurationSO audioConfiguration, Vector3 positionInSpace)
 	{
 		float fadeDuration = 2f;
@@ -139,11 +143,14 @@ public class AudioManager : MonoBehaviour
 		if (_musicSoundEmitter != null && _musicSoundEmitter.IsPlaying())
 		{
 			AudioClip songToPlay = audioCue.GetClips()[0];
+
+			//만약 플레이 하려는 음악이 지금 재생하려는 음악이랑 같다면.
 			if (_musicSoundEmitter.GetClip() == songToPlay)
-				return AudioCueKey.Invalid;
+				return AudioCueKey.Invalid; //그냥 무시
 
 			//Music is already playing, need to fade it out
 			startTime = _musicSoundEmitter.FadeMusicOut(fadeDuration);
+			//_musicSoundEmitter.FadeMusicOut(fadeDuration);
 		}
 
 		_musicSoundEmitter = _pool.Request();
@@ -178,7 +185,7 @@ public class AudioManager : MonoBehaviour
 	/// </summary>
 	public AudioCueKey PlayAudioCue(AudioCueSO audioCue, AudioConfigurationSO settings, Vector3 position = default)
 	{
-		AudioClip[] clipsToPlay = audioCue.GetClips();
+		AudioClip[] clipsToPlay = audioCue.GetClips(); //오디오 시리즈를 가져온다.
 		SoundEmitter[] soundEmitterArray = new SoundEmitter[clipsToPlay.Length];
 
 		int nOfClips = clipsToPlay.Length;
@@ -187,7 +194,10 @@ public class AudioManager : MonoBehaviour
 			soundEmitterArray[i] = _pool.Request();
 			if (soundEmitterArray[i] != null)
 			{
+				//사운드 재생
 				soundEmitterArray[i].PlayAudioClip(clipsToPlay[i], settings, audioCue.looping, position);
+
+				//만약 반복재생이 아니라면 끝날때 함수 추가.
 				if (!audioCue.looping)
 					soundEmitterArray[i].OnSoundFinishedPlaying += OnSoundEmitterFinishedPlaying;
 			}
@@ -198,6 +208,7 @@ public class AudioManager : MonoBehaviour
 
 	public bool FinishAudioCue(AudioCueKey audioCueKey)
 	{
+		//리스트 값이 있는지 없는지 확인 겸 음악 제어 리스트 가져오는 함수
 		bool isFound = _soundEmitterVault.Get(audioCueKey, out SoundEmitter[] soundEmitters);
 
 		if (isFound)
@@ -218,8 +229,10 @@ public class AudioManager : MonoBehaviour
 
 	public bool StopAudioCue(AudioCueKey audioCueKey)
 	{
+		//리스트 값이 있는지 없는지 확인 겸 음악 제어 리스트 가져오는 함수
 		bool isFound = _soundEmitterVault.Get(audioCueKey, out SoundEmitter[] soundEmitters);
 
+		//만약 sound가 존재한다면
 		if (isFound)
 		{
 			for (int i = 0; i < soundEmitters.Length; i++)

@@ -4,6 +4,37 @@ using UnityEngine;
 
 public static class FileManager
 {
+	//파일 이동(없으면 생성)
+	public static bool MoveFile(string fileName, string newFileName)
+	{
+		var fullPath = Path.Combine(Application.persistentDataPath, fileName);
+		var newFullPath = Path.Combine(Application.persistentDataPath, newFileName);
+
+		try
+		{
+			if (File.Exists(newFullPath))
+			{
+				File.Delete(newFullPath);
+			}
+
+			if (!File.Exists(fullPath))
+			{
+				return false;
+			}
+
+			//fullPath -> newFullPath 파일 이동
+			File.Move(fullPath, newFullPath);
+		}
+		catch (Exception e)
+		{
+			Debug.LogError($"Failed to move file from {fullPath} to {newFullPath} with exception {e}");
+			return false;
+		}
+
+		return true;
+	}
+
+	//파일 쓰기
 	public static bool WriteToFile(string fileName, string fileContents)
 	{
 		var fullPath = Path.Combine(Application.persistentDataPath, fileName);
@@ -38,33 +69,5 @@ public static class FileManager
 			result = "";
 			return false;
 		}
-	}
-
-	public static bool MoveFile(string fileName, string newFileName)
-	{
-		var fullPath = Path.Combine(Application.persistentDataPath, fileName);
-		var newFullPath = Path.Combine(Application.persistentDataPath, newFileName);
-
-		try
-		{
-			if (File.Exists(newFullPath))
-			{
-				File.Delete(newFullPath);
-			}
-
-			if (!File.Exists(fullPath))
-			{
-				return false;
-			}
-			
-			File.Move(fullPath, newFullPath);
-		}
-		catch (Exception e)
-		{
-			Debug.LogError($"Failed to move file from {fullPath} to {newFullPath} with exception {e}");
-			return false;
-		}
-
-		return true;
 	}
 }

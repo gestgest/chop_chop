@@ -57,17 +57,21 @@ public class AudioClipsGroup
 			// Select next clip index based on the appropriate SequenceMode
 			switch (sequenceMode)
 			{
+				//랜덤으로 고른경우
 				case SequenceMode.Random:
+					//진짜 말 그대로 랜덤으로 고른다.
 					_nextClipToPlay = UnityEngine.Random.Range(0, audioClips.Length);
 					break;
 
 				case SequenceMode.RandomNoImmediateRepeat:
+					//만약 저번 클립과 같다면 다시 랜덤으로 돌린다.
 					do
 					{
 						_nextClipToPlay = UnityEngine.Random.Range(0, audioClips.Length);
 					} while (_nextClipToPlay == _lastClipPlayed);
 					break;
 
+					//순서대로 인덱스가 증가하지만 다 꽉채우면 0으로 되돌린다.
 				case SequenceMode.Sequential:
 					_nextClipToPlay = (int)Mathf.Repeat(++_nextClipToPlay, audioClips.Length);
 					break;

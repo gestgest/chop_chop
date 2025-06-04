@@ -14,7 +14,7 @@ public class SoundEmitterVault
 
 	public AudioCueKey GetKey(AudioCueSO cue)
 	{
-		return new AudioCueKey(_nextUniqueKey++, cue);
+		return new AudioCueKey(_nextUniqueKey++, cue); //값과 음악리스트를 가지고 있는 AudioCueKey
 	}
 
 	public void Add(AudioCueKey key, SoundEmitter[] emitter)
@@ -33,8 +33,11 @@ public class SoundEmitterVault
 		return emitterKey;
 	}
 
+	//리스트 값이 있는지 없는지 확인 겸 음악 속성 리스트 가져오는 함수
 	public bool Get(AudioCueKey key, out SoundEmitter[] emitter)
 	{
+		//key값과 _emittersKey의 내용물이 같은 경우 index값 반환
+		//x == key는 AudioCueKey함수안에 있는 operator 함수다.
 		int index = _emittersKey.FindIndex(x => x == key);
 
 		if (index < 0)
@@ -43,6 +46,7 @@ public class SoundEmitterVault
 			return false;
 		}
 
+		//음악 속성 리스트를 넣는다.
 		emitter = _emittersList[index];
 		return true;
 	}

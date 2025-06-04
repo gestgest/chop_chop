@@ -47,6 +47,9 @@ public class AudioConfigurationSO : ScriptableObject
 		VeryLow = 256,
 	}
 
+
+
+	//매개변수의 오디오소스를 설정 => 오디오 재생 컴포넌트 설정
 	public void ApplyTo(AudioSource audioSource)
 	{
 		audioSource.outputAudioMixerGroup = this.OutputAudioMixerGroup;

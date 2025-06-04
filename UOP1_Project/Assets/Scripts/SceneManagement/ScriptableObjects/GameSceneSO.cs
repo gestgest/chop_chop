@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
 using UnityEngine.AddressableAssets;
 
+//This class is a base class which contains what is common to all game scenes (Locations, Menus, Managers)
 /// <summary>
-/// This class is a base class which contains what is common to all game scenes (Locations, Menus, Managers)
+/// 이 클래스는 게임 씬에 공통적으로 있는 속성을 포함하고 있다.
 /// </summary>
 public class GameSceneSO : DescriptionBaseSO
 {
@@ -12,12 +13,13 @@ public class GameSceneSO : DescriptionBaseSO
 
 	/// <summary>
 	/// Used by the SceneSelector tool to discern what type of scene it needs to load
+	/// GameSceneType는 SceneSelector 클래스가 장면 타입을 식별할 때 쓰인다
 	/// </summary>
 	public enum GameSceneType
 	{
-		//Playable scenes
-		Location, //SceneSelector tool will also load PersistentManagers and Gameplay
-		Menu, //SceneSelector tool will also load Gameplay
+		//주요 게임 플레이씬
+		Location, //게임 지역씬
+		Menu,
 
 		//Special scenes
 		Initialisation,

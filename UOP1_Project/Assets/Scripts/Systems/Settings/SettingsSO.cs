@@ -17,7 +17,7 @@ public class SettingsSO : ScriptableObject
 	public float SfxVolume => _sfxVolume;
 	public int ResolutionsIndex => _resolutionsIndex;
 	public int AntiAliasingIndex => _antiAliasingIndex;
-	public float ShadowDistance => _shadowDistance;
+	public float ShadowDistance => _shadowDistance; //그림자 거리
 	public bool IsFullscreen => _isFullscreen;
 	public Locale CurrentLocale => _currentLocale;
 	public void SaveAudioSettings(float newMusicVolume, float newSfxVolume, float newMasterVolume)

@@ -28,15 +28,17 @@ public class SaveSystem : ScriptableObject
 		_loadLocation.OnLoadingRequested -= CacheLoadLocations;
 	}
 
+	//저장할 비어있는 공간의 GUID를 통해 저장하는 함수 => 아이템, 퀘스트 저장
 	private void CacheLoadLocations(GameSceneSO locationToLoad, bool showLoadingScreen, bool fadeScreen)
 	{
 		LocationSO locationSO = locationToLoad as LocationSO;
+		Debug.Log(locationSO.locationName);
 		if (locationSO)
 		{
 			saveData._locationId = locationSO.Guid;
 		}
 
-		SaveDataToDisk();
+		SaveDataToDisk(); //디스크 저장 함수
 	}
 
 	public bool LoadSaveDataFromDisk()
@@ -70,6 +72,7 @@ public class SaveSystem : ScriptableObject
 
 	}
 
+	//기존 거는 백업하고, 데이터와 퀘스트는 JSON 형태로 저장
 	public void SaveDataToDisk()
 	{
 		saveData._itemStacks.Clear();
@@ -77,13 +80,15 @@ public class SaveSystem : ScriptableObject
 		{
 			saveData._itemStacks.Add(new SerializedItemStack(itemStack.Item.Guid, itemStack.Amount));
 		}
-		saveData._finishedQuestlineItemsGUIds.Clear();
+		//
 
+		saveData._finishedQuestlineItemsGUIds.Clear();
 		foreach (var item in _questManagerSO.GetFinishedQuestlineItemsGUIds())
 		{
 			saveData._finishedQuestlineItemsGUIds.Add(item);
-
 		}
+
+		//백업하고, JSON 형태로 저장
 		if (FileManager.MoveFile(saveFilename, backupSaveFilename))
 		{
 			if (FileManager.WriteToFile(saveFilename, saveData.ToJson()))

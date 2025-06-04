@@ -13,8 +13,8 @@ public class QuestManagerSO : ScriptableObject
 
 	[Header("Linstening to channels")]
 	[FormerlySerializedAs("_checkStepValidityEvent")]
-	[SerializeField] private VoidEventChannelSO _continueWithStepEvent = default;
-	[SerializeField] private IntEventChannelSO _endDialogueEvent = default;
+	[SerializeField] private VoidEventChannelSO _continueWithStepEvent = default; //평범한 UnityAction
+	[SerializeField] private IntEventChannelSO _endDialogueEvent = default; //int가 매개변수인 UnityAction
 	[SerializeField] private VoidEventChannelSO _makeWinningChoiceEvent = default;
 	[SerializeField] private VoidEventChannelSO _makeLosingChoiceEvent = default;
 
@@ -47,19 +47,22 @@ public class QuestManagerSO : ScriptableObject
 		//Add code for saved information
 		_continueWithStepEvent.OnEventRaised += CheckStepValidity;
 		_endDialogueEvent.OnEventRaised += EndDialogue;
-		_makeWinningChoiceEvent.OnEventRaised += MakeWinningChoice;
-		_makeLosingChoiceEvent.OnEventRaised += MakeLosingChoice;
+		_makeWinningChoiceEvent.OnEventRaised += MakeWinningChoice; //???
+		_makeLosingChoiceEvent.OnEventRaised += MakeLosingChoice; //???
 		StartQuestline();
 	}
 
-	void StartQuestline()
+	void StartQuestline() //다음 종합 퀘스트 시작
 	{
 		if (_questlines != null)
 		{
 			if (_questlines.Exists(o => !o.IsDone))
 			{
+				//완료 안한 퀘스트를 찾아서
 				_currentQuestlineIndex = _questlines.FindIndex(o => !o.IsDone);
 
+				//종합 퀘스트 다 완료해서 -1 나오는 거 방지
+					//=>  _currentQuestline = null 방지
 				if (_currentQuestlineIndex >= 0)
 					_currentQuestline = _questlines.Find(o => !o.IsDone);
 			}
@@ -151,7 +154,7 @@ public class QuestManagerSO : ScriptableObject
 		}
 	}
 
-	void MakeWinningChoice()
+	void MakeWinningChoice() //??????
 	{
 		//check if has sweet recipe
 		_currentStep.Item = _winningItem;
@@ -159,7 +162,7 @@ public class QuestManagerSO : ScriptableObject
 		CheckStepValidity();
 	}
 
-	void MakeLosingChoice()
+	void MakeLosingChoice() //??????
 	{
 		_currentStep.Item = _losingItem;
 		_currentStep.EndStepEvent = _startLosingCutscene;
@@ -176,11 +179,14 @@ public class QuestManagerSO : ScriptableObject
 			}
 	}
 
+	//퀘스트 조건 체크하는 함수
 	void CheckStepValidity()
 	{
 
 		if (_currentStep != null)
 		{
+			//퀘스트의 조건에 따라
+			//아이템 체크, 아이템 반납, 대화
 			switch (_currentStep.Type)
 			{
 				case StepType.CheckItem:
@@ -225,6 +231,7 @@ public class QuestManagerSO : ScriptableObject
 		}
 	}
 
+	//
 	void EndDialogue(int dialogueType)
 	{
 
@@ -232,10 +239,11 @@ public class QuestManagerSO : ScriptableObject
 		switch ((DialogueType)dialogueType)
 		{
 			case DialogueType.CompletionDialogue:
+				//HasReward가 true라면 보상주기
 				if (_currentStep.HasReward && _currentStep.RewardItem != null)
 				{
 					ItemStack itemStack = new ItemStack(_currentStep.RewardItem, _currentStep.RewardItemCount);
-					_rewardItemEvent.RaiseEvent(itemStack);
+					_rewardItemEvent.RaiseEvent(itemStack); //? 아이템 받는 이벤트
 				}
 
 				EndStep();
@@ -248,31 +256,36 @@ public class QuestManagerSO : ScriptableObject
 		}
 	}
 
+	//스텝을 완료하고 다음 스텝으로 넘어가는 함수. (스텝 = 서브 퀘스트)
 	void EndStep()
 	{
 		_currentStep = null;
 		if (_currentQuest != null)
-		if (_currentQuest.Steps.Count > _currentStepIndex)
 		{
-			_currentQuest.Steps[_currentStepIndex].FinishStep();
-			saveSystem.SaveDataToDisk();
-			if (_currentQuest.Steps.Count > _currentStepIndex + 1)
+			if (_currentQuest.Steps.Count > _currentStepIndex)
 			{
-				_currentStepIndex++;
-				StartStep();
+				//서브 퀘스트를 끝내고
+				_currentQuest.Steps[_currentStepIndex].FinishStep();
+				saveSystem.SaveDataToDisk();
 
-			}
-			else
-			{
+				//만약 퀘스트의 단계가 완료되지 않았다면
+				if (_currentQuest.Steps.Count > _currentStepIndex + 1)
+				{
+					_currentStepIndex++;
+					StartStep();
 
-				EndQuest();
+				}
+				else //퀘스트를 다 했다면
+				{
+					EndQuest();
+				}
 			}
 		}
 	}
 
-	void EndQuest()
+	//퀘스트 완료 함수
+	void EndQuest() 
 	{
-
 		if (_currentQuest != null)
 		{
 			_currentQuest.FinishQuest();
@@ -289,11 +302,9 @@ public class QuestManagerSO : ScriptableObject
 			}
 
 		}
-
-
 	}
 
-	void EndQuestline()
+	void EndQuestline() //종합퀘스트 끝내고 다음 종합 퀘스트로 이동
 	{
 		if (_questlines != null)
 		{
@@ -304,15 +315,16 @@ public class QuestManagerSO : ScriptableObject
 
 			}
 
-			if (_questlines.Exists(o => o.IsDone))
-			{
+			//하나라도 완료했다면 다음 퀘스트
+				//ㄴ 그냥 안해도 되지 않나? null 방지?
+			//if (_questlines.Exists(o => o.IsDone))
+			//{
+				Debug.Log("퀘스트매니저 : 수정된 함수");
 				StartQuestline();
 
-			}
+			//}
 
 		}
-
-
 	}
 
 	public List<string> GetFinishedQuestlineItemsGUIds()
@@ -367,9 +379,6 @@ public class QuestManagerSO : ScriptableObject
 				foreach (var step in quest.Steps)
 				{
 					step.IsDone = finishedItemsGUIds.Exists(o => o == step.Guid);
-
-
-
 				}
 
 			}
@@ -384,18 +393,13 @@ public class QuestManagerSO : ScriptableObject
 		{
 			questline.IsDone = false;
 
-
 			foreach (var quest in questline.Quests)
 			{
 				quest.IsDone = false;
 
-
 				foreach (var step in quest.Steps)
 				{
 					step.IsDone = false;
-
-
-
 				}
 
 			}

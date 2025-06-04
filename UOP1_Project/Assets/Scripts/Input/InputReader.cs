@@ -2,12 +2,13 @@
 using UnityEngine.InputSystem;
 using UnityEngine.Events;
 
+//키 입력 관련
 [CreateAssetMenu(fileName = "InputReader", menuName = "Game/Input Reader")]
 public class InputReader : DescriptionBaseSO, GameInput.IGameplayActions, GameInput.IDialoguesActions, GameInput.IMenusActions, GameInput.ICheatsActions
 {
 	[Space]
 	[SerializeField] private GameStateSO _gameStateManager;
-	
+
 	// Assign delegate{} to events to initialise them with an empty delegate
 	// so we can skip the null check when we use them
 
@@ -257,7 +258,7 @@ public class InputReader : DescriptionBaseSO, GameInput.IGameplayActions, GameIn
 	{
 
 	}
-	
+
 	public void OnRightClick(InputAction.CallbackContext context)
 	{
 

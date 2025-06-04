@@ -8,28 +8,30 @@ using UnityEngine.Localization;
 [CreateAssetMenu(fileName = "Item", menuName = "Inventory/Item")]
 public class ItemSO : SerializableScriptableObject
 {
+
+	//언어마다 다른 언어
 	[Tooltip("The name of the item")]
 	[SerializeField] private LocalizedString _name = default;
 
 	[Tooltip("A preview image for the item")]
 	[SerializeField]
-	private Sprite _previewImage = default;
+	private Sprite _previewImage = default; //이미지
 
 	[Tooltip("A description of the item")]
 	[SerializeField]
-	private LocalizedString _description = default;
+	private LocalizedString _description = default; //설명
 
 	[Tooltip("A description of the item")]
 	[SerializeField]
-	private int _healthResorationValue = default;
+	private int _healthResorationValue = default; //
 
 	[Tooltip("The type of item")]
 	[SerializeField]
-	private ItemTypeSO _itemType = default;
+	private ItemTypeSO _itemType = default; // 타입
 
 	[Tooltip("A prefab reference for the model of the item")]
 	[SerializeField]
-	private GameObject _prefab = default;
+	private GameObject _prefab = default; //아이템 모델
 
 
 	public LocalizedString Name => _name;
