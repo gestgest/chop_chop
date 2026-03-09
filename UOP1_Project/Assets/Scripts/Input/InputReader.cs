@@ -11,6 +11,7 @@ public class InputReader : DescriptionBaseSO, GameInput.IGameplayActions, GameIn
 
 	// Assign delegate{} to events to initialise them with an empty delegate
 	// so we can skip the null check when we use them
+	// ㄴ 그래서 delegate를 쓰면 우리는 null check를 스킵할 수 있다.
 
 	// Gameplay
 	public event UnityAction JumpEvent = delegate { };
