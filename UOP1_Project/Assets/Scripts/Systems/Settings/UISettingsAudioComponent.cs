@@ -10,6 +10,7 @@ public class UISettingsAudioComponent : MonoBehaviour
 	[SerializeField] UIGenericButton _saveButton;
 	[SerializeField] UIGenericButton _resetButton;
 
+	//오디오 매니저?에서 받는 듯
 	[Header("Broadcasting")]
 	[SerializeField] private FloatEventChannelSO _masterVolumeEventChannel = default;
 	[SerializeField] private FloatEventChannelSO _sFXVolumeEventChannel = default;
@@ -38,7 +39,7 @@ public class UISettingsAudioComponent : MonoBehaviour
 	}
 	private void OnDisable()
 	{
-		ResetVolumes(); // reset volumes on disable. If not saved, it will reset to initial volumes. 
+		ResetVolumes(); // reset volumes on disable. If not saved, it will reset to initial volumes.
 		_musicVolumeField.OnNextOption -= IncreaseMusicVolume;
 		_musicVolumeField.OnPreviousOption -= DecreaseMusicVolume;
 		_saveButton.Clicked -= SaveVolumes;

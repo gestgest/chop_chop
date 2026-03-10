@@ -13,8 +13,9 @@ public class StartGame : MonoBehaviour
 	[SerializeField] private SaveSystem _saveSystem = default;
 	[SerializeField] private bool _showLoadScreen = default;
 
+	//Listening to => broadcasting on
 	[Header("Broadcasting on")]
-	[SerializeField] private LoadEventChannelSO _loadLocation = default;
+	[SerializeField] private LoadEventChannelSO _loadLocation = default; //from SceneLoader.cs
 
 	//publisher) 넣는 함수
 	[Header("Listening to")]
@@ -36,13 +37,16 @@ public class StartGame : MonoBehaviour
 		_onContinueButton.OnEventRaised -= ContinuePreviousGame;
 	}
 
+	/// <summary>
+	/// 새로운 개임 시작
+	/// </summary>
 	private void StartNewGame()
 	{
-		_hasSaveData = false;
+		_hasSaveData = false; //애초에 새로 시작해서 새로운 데이터가 없음
 
-		_saveSystem. WriteEmptySaveFile();
-		_saveSystem.SetNewGameData(); //가져오는 함수
-		_loadLocation.RaiseEvent(_locationsToLoad, _showLoadScreen);
+		_saveSystem.WriteEmptySaveFile(); // todo : 이거는 빼도 되지 않을까?
+		_saveSystem.SetNewGameData(); //새롭게 디스크 초기화
+		_loadLocation.RaiseEvent(_locationsToLoad, _showLoadScreen); //씬 로드
 	}
 
 	private void ContinuePreviousGame()

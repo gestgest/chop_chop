@@ -22,7 +22,7 @@ public class ContributerProfile
 
 public class UICredits : MonoBehaviour
 {
-	public UnityAction OnCloseCredits;
+	public UnityAction OnCloseCredits; //말 그대로 닫는 함수
 
 	[SerializeField] private InputReader _inputReader = default;
 	[SerializeField] private TextAsset _creditsAsset;
@@ -58,6 +58,7 @@ public class UICredits : MonoBehaviour
 		OnCloseCredits.Invoke();
 	}
 
+	//크레딧 내용 채우는 함수
 	private void FillCreditsRoller()
 	{
 		_creditsList = new CreditsList();

@@ -41,19 +41,24 @@ public class UIPopup : MonoBehaviour
 
     public void SetPopup(PopupType popupType)
     {
+	    //ex) Quit
         _actualType = popupType;
-        bool isConfirmation = false;
+        bool isConfirmation = false; //버튼 두 개인 경우
         bool hasExitButton = false;
+
+        //텍스트 가져오기
         _titleText.StringReference.TableEntryReference = _actualType.ToString() + "_Popup_Title";
         _descriptionText.StringReference.TableEntryReference = _actualType.ToString() + "_Popup_Description";
         string tableEntryReferenceConfirm = PopupButtonType.Confirm + "_" + _actualType;
         string tableEntryReferenceCancel = PopupButtonType.Cancel + "_" + _actualType;
+
+        //중첩되는 문장이 많지만 만약 버튼이 하나인 팝업이 생길 수 있으니 유지
+        //isSelected : 버튼이 focus 상태인지 아닌지.
         switch (_actualType)
         {
             case PopupType.NewGame:
             case PopupType.BackToMenu:
                 isConfirmation = true;
-
                 _popupButton1.SetButton(tableEntryReferenceConfirm, true);
                 _popupButton2.SetButton(tableEntryReferenceCancel, false);
                 hasExitButton = true;
@@ -70,7 +75,7 @@ public class UIPopup : MonoBehaviour
                 break;
         }
 
-        if (isConfirmation) // needs two button : Is a decision 
+        if (isConfirmation) // needs two button : Is a decision
         {
             _popupButton1.gameObject.SetActive(true);
             _popupButton2.gameObject.SetActive(true);
@@ -78,7 +83,7 @@ public class UIPopup : MonoBehaviour
             _popupButton2.Clicked += CancelButtonClicked;
             _popupButton1.Clicked += ConfirmButtonClicked;
         }
-        else // needs only one button : Is an information 
+        else // needs only one button : Is an information
         {
             _popupButton1.gameObject.SetActive(true);
             _popupButton2.gameObject.SetActive(false);
@@ -86,9 +91,10 @@ public class UIPopup : MonoBehaviour
             _popupButton1.Clicked += ConfirmButtonClicked;
         }
 
+        //닫는 버튼 : quit는 확인이 나가는 거라 필요없다.
         _buttonClose.gameObject.SetActive(hasExitButton);
 
-        if (hasExitButton) // can exit : Has to take the decision or aknowledge the information
+        if (hasExitButton) // can exit : Has to take the decision or acknowledge the information
         {
             _inputReader.MenuCloseEvent += ClosePopupButtonClicked;
         }

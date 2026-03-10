@@ -2,6 +2,10 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+
+/// <summary>
+/// 마우스 focus와 키보드입력을 동시에 해서 입력이 무시되는 현상을 해결하고자 만든 핸들러
+/// </summary>
 public class MenuSelectionHandler : MonoBehaviour
 {
 	[SerializeField] private InputReader _inputReader;
@@ -11,16 +15,16 @@ public class MenuSelectionHandler : MonoBehaviour
 
 	private void OnEnable()
 	{
-		_inputReader.MenuMouseMoveEvent += HandleMoveCursor;
 		_inputReader.MoveSelectionEvent += HandleMoveSelection;
+		_inputReader.MenuMouseMoveEvent += HandleMoveCursor;
 
 		StartCoroutine(SelectDefault());
 	}
 
 	private void OnDisable()
 	{
-		_inputReader.MenuMouseMoveEvent -= HandleMoveCursor;
 		_inputReader.MoveSelectionEvent -= HandleMoveSelection;
+		_inputReader.MenuMouseMoveEvent -= HandleMoveCursor;
 	}
 
 	public void UpdateDefault(GameObject newDefault)
@@ -29,12 +33,15 @@ public class MenuSelectionHandler : MonoBehaviour
 	}
 
 	/// <summary>
-	/// Highlights the default element
+	/// Highlights the default element. [focus ui]
 	/// </summary>
 	private IEnumerator SelectDefault()
 	{
-		yield return new WaitForSeconds(.03f); // Necessary wait otherwise the highlight won't show up
+		// null로 쓰면 안되냐 : 만약 vertical layout인 경우 1프레임보다는 오래 걸린다.
+		// Necessary wait otherwise the highlight won't show up
+		yield return new WaitForSeconds(.03f);// =>2~3프레임
 
+		//focus
 		if (_defaultSelection != null)
 			UpdateSelection(_defaultSelection);
 	}
@@ -47,21 +54,28 @@ public class MenuSelectionHandler : MonoBehaviour
 	}
 
 	/// <summary>
-	/// Fired by keyboard and gamepad inputs. Current selected UI element will be the ui Element that was selected
+	/// **Fired by keyboard and gamepad inputs.**
+	/// Current selected UI element will be the ui Element that was selected
 	/// when the event was fired. The _currentSelection is updated later on, after the EventSystem moves to the
 	/// desired UI element, the UI element will call into UpdateSelection()
 	/// </summary>
 	private void HandleMoveSelection()
 	{
+		//만약 키보드를 누르면 자동으로 마우스는 안 보이게 함
 		Cursor.visible = false;
 
+		// 커서가 UI 바깥에 있는 경우 => 당연히 커서가 이미 물체에 있고 키보드를 아래로 누른다면
+		// 대체로 발동은 안하는 듯
 		// Handle case where no UI element is selected because mouse left selectable bounds
 		if (EventSystem.current.currentSelectedGameObject == null)
+		{
 			EventSystem.current.SetSelectedGameObject(_currentSelection);
+		}
 	}
 
 	private void HandleMoveCursor()
 	{
+		//마우스 선택한 게 잇다면
 		if (_mouseSelection != null)
 		{
 			EventSystem.current.SetSelectedGameObject(_mouseSelection);
@@ -83,7 +97,7 @@ public class MenuSelectionHandler : MonoBehaviour
 			return;
 		}
 
-		// keep selecting the last thing the mouse has selected 
+		// keep selecting the last thing the mouse has selected
 		_mouseSelection = null;
 		EventSystem.current.SetSelectedGameObject(_currentSelection);
 	}
@@ -106,7 +120,9 @@ public class MenuSelectionHandler : MonoBehaviour
 	/// <param name="UIElement"></param>
 	public void UpdateSelection(GameObject UIElement)
 	{
-		if ((UIElement.GetComponent<MultiInputSelectableElement>() != null) || (UIElement.GetComponent<MultiInputButton>() != null))
+		//ui element가 chopchop에서 만든 선택 가능 멀티UI가 있어야지 선택 변수에 넣을 수 있음
+		if ((UIElement.GetComponent<MultiInputSelectableElement>() != null)
+		    || (UIElement.GetComponent<MultiInputButton>() != null))
 		{
 			_mouseSelection = UIElement;
 			_currentSelection = UIElement;

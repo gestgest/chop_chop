@@ -41,6 +41,7 @@ public class SaveSystem : ScriptableObject
 		SaveDataToDisk(); //디스크 저장 함수
 	}
 
+	//디스크에서 가져오기
 	public bool LoadSaveDataFromDisk()
 	{
 		if (FileManager.LoadFromFile(saveFilename, out var json))
@@ -110,7 +111,6 @@ public class SaveSystem : ScriptableObject
 		_questManagerSO.ResetQuestlines();
 
 		SaveDataToDisk();
-
 	}
 	void SaveSettings()
 	{

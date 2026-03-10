@@ -4,8 +4,14 @@ using System.Collections;
 
 public class UICreditsRoller : MonoBehaviour
 {
-	[SerializeField, Tooltip("Set speed of a rolling effect")] private float _speedPreset = 100f; //normal rolling speed
-	[SerializeField, Tooltip("This is actuall speed of rolling")] private float _speed = 100f; //actual speed of rolling
+	//디폴트 속도
+	[SerializeField, Tooltip("Set speed of a rolling effect")]
+	private float _speedPreset = 100f; //normal rolling speed
+
+	//진짜 속도 : 만약 꾹 누르면 2배
+	[SerializeField, Tooltip("This is actuall speed of rolling")]
+	private float _speed = 100f; //actual speed of rolling
+
 	[SerializeField] private bool _rollAgain = false;
 
 	[Header("References")]
@@ -14,7 +20,7 @@ public class UICreditsRoller : MonoBehaviour
 	[SerializeField] private RectTransform _mask = default;
 
 	public event UnityAction OnRollingEnded;
-	
+
 	private float _expectedFinishingPoint;
 
 
@@ -39,7 +45,11 @@ public class UICreditsRoller : MonoBehaviour
 		//This make rolling effect
 		if (_textCredits.anchoredPosition.y < _expectedFinishingPoint)
 		{
-			_textCredits.anchoredPosition = new Vector2(_textCredits.anchoredPosition.x, _textCredits.anchoredPosition.y + _speed * Time.deltaTime);
+			_textCredits.anchoredPosition = new Vector2(
+				_textCredits.anchoredPosition.x,
+				_textCredits.anchoredPosition.y
+				+ _speed * Time.deltaTime
+			);
 		}
 		else if (_expectedFinishingPoint != 0) //this happend when rolling reach to end
 		{
@@ -49,12 +59,18 @@ public class UICreditsRoller : MonoBehaviour
 
 	private IEnumerator InitialOffset()
 	{
+		//UI 세팅 전 대기 시간
 		yield return new WaitForSecondsRealtime(0.02f);
 
 		_inputReader.EnableGameplayInput();
+
+		//예상 위치
 		_expectedFinishingPoint = (_textCredits.rect.height + _mask.rect.height) / 2;
 
-		_textCredits.anchoredPosition = new Vector2(_textCredits.anchoredPosition.x, -((_textCredits.rect.height + _mask.rect.height) / 2));
+		//초기 위치
+		_textCredits.anchoredPosition = new Vector2(_textCredits.anchoredPosition.x,
+			-((_textCredits.rect.height + _mask.rect.height) / 2)
+		);
 	}
 
 	private void OnMove(Vector2 direction)

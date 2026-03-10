@@ -40,32 +40,40 @@ public enum SettingsType
 	Graphics,
 	Audio,
 }
+
+//setting panel
 public class UISettingsController : MonoBehaviour
 {
+	//Panel안에 있는 세팅 UI
 	[SerializeField] private UISettingsLanguageComponent _languageComponent;
 	[SerializeField] private UISettingsGraphicsComponent _graphicsComponent;
 	[SerializeField] private UISettingsAudioComponent _audioComponent;
 	[SerializeField] private UISettingTabsFiller _settingTabFiller = default;
+
 	[SerializeField] private SettingsSO _currentSettings = default;
 	[SerializeField] private List<SettingsType> _settingTabsList = new List<SettingsType>();
+
 	private SettingsType _selectedTab = SettingsType.Audio;
 	[SerializeField] private InputReader _inputReader = default;
 	[SerializeField] private VoidEventChannelSO SaveSettingsEvent = default;
+
+	//닫는 함수 : 대체적으로 전에 있던 화면으로 되돌아간다.
 	public UnityAction Closed;
 	private void OnEnable()
 	{
+		//save 함수 저장 : 대체로 SettingSO에 있는 값을 가져옴
 		_languageComponent._save += SaveLaguageSettings;
 		_audioComponent._save += SaveAudioSettings;
 		_graphicsComponent._save += SaveGraphicsSettings;
 
-		_inputReader.MenuCloseEvent += CloseScreen;
-		_inputReader.TabSwitched += SwitchTab;
+		_inputReader.MenuCloseEvent += CloseScreen; //esc?
+		_inputReader.TabSwitched += SwitchTab; //tab?
 
 		_settingTabFiller.FillTabs(_settingTabsList);
-		_settingTabFiller.ChooseTab += OpenSetting;
+		_settingTabFiller.ChooseTab += OpenSetting; //탭 변환할때 기존 탭 비활성화
 
+		//디폴트는 오디오 탭
 		OpenSetting(SettingsType.Audio);
-
 	}
 	private void OnDisable()
 	{
@@ -80,7 +88,6 @@ public class UISettingsController : MonoBehaviour
 	{
 		Closed.Invoke();
 	}
-
 
 
 	void OpenSetting(SettingsType settingType)
@@ -105,13 +112,14 @@ public class UISettingsController : MonoBehaviour
 		_graphicsComponent.gameObject.SetActive((settingType == SettingsType.Graphics));
 		_audioComponent.gameObject.SetActive(settingType == SettingsType.Audio);
 		_settingTabFiller.SelectTab(settingType);
-
 	}
+
+	// 유추 : 게임패드 한정 탭 스위칭
 	void SwitchTab(float orientation)
 	{
-
 		if (orientation != 0)
 		{
+			Debug.Log("엄준식 : " + orientation);
 			bool isLeft = orientation < 0;
 			int initialIndex = _settingTabsList.FindIndex(o => o == _selectedTab);
 			if (initialIndex != -1)
@@ -131,6 +139,13 @@ public class UISettingsController : MonoBehaviour
 			OpenSetting(_settingTabsList[initialIndex]);
 		}
 	}
+
+	//저장 함수 라인
+
+	/// <summary>
+	/// 언어 저장
+	/// </summary>
+	/// <param name="local">국적</param>
 	public void SaveLaguageSettings(Locale local)
 	{
 		_currentSettings.SaveLanguageSettings(local);

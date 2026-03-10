@@ -21,26 +21,28 @@ public class UIMenuManager : MonoBehaviour
 	[SerializeField]
 	private VoidEventChannelSO _continueGameEvent = default; //from StartGame.cs
 
-
-
 	private bool _hasSaveData;
+
 
 	private IEnumerator Start()
 	{
-		_inputReader.EnableMenuInput();
-		yield return new WaitForSeconds(0.4f); //waiting time for all scenes to be loaded
+		_inputReader.EnableMenuInput(); //메뉴 입력 준비 완료
+		yield return new WaitForSeconds(0.4f); //로딩 0.4초
 		SetMenuScreen();
 	}
+
 	void SetMenuScreen()
 	{
+		//디스크에서 가져오고
 		_hasSaveData = _saveSystem.LoadSaveDataFromDisk();
-		_mainMenuPanel.SetMenuScreen(_hasSaveData);
+		_mainMenuPanel.SetMenuScreen(_hasSaveData); //제대로 가져오면 continue 버튼 활성화
+
+		//UI의 이벤트를 각각 설정 => UI의 버튼들은 Manager
 		_mainMenuPanel.ContinueButtonAction += _continueGameEvent.RaiseEvent;
 		_mainMenuPanel.NewGameButtonAction += ButtonStartNewGameClicked;
 		_mainMenuPanel.SettingsButtonAction += OpenSettingsScreen;
 		_mainMenuPanel.CreditsButtonAction += OpenCreditsScreen;
 		_mainMenuPanel.ExitButtonAction += ShowExitConfirmationPopup;
-
 	}
 
 	void ButtonStartNewGameClicked()
@@ -48,14 +50,12 @@ public class UIMenuManager : MonoBehaviour
 		if (!_hasSaveData)
 		{
 			ConfirmStartNewGame();
-
 		}
 		else
 		{
+			//계속 할거냐
 			ShowStartNewGameConfirmationPopup();
-
 		}
-
 	}
 
 	void ConfirmStartNewGame()
@@ -106,24 +106,19 @@ public class UIMenuManager : MonoBehaviour
 	{
 		_settingsPanel.gameObject.SetActive(true);
 		_settingsPanel.Closed += CloseSettingsScreen;
-
 	}
+
+	//닫
 	public void CloseSettingsScreen()
 	{
 		_settingsPanel.Closed -= CloseSettingsScreen;
 		_settingsPanel.gameObject.SetActive(false);
-		_mainMenuPanel.SetMenuScreen(_hasSaveData);
-
+		_mainMenuPanel.SetMenuScreen(_hasSaveData); //다시 메뉴로 로딩
 	}
 	public void OpenCreditsScreen()
 	{
 		_creditsPanel.gameObject.SetActive(true);
-
 		_creditsPanel.OnCloseCredits += CloseCreditsScreen;
-
-
-
-
 	}
 	public void CloseCreditsScreen()
 	{
@@ -139,21 +134,24 @@ public class UIMenuManager : MonoBehaviour
 		_popupPanel.ConfirmationResponseAction += HideExitConfirmationPopup;
 		_popupPanel.gameObject.SetActive(true);
 		_popupPanel.SetPopup(PopupType.Quit);
-
-
-
 	}
+
+	//나가겠습니까?
 	void HideExitConfirmationPopup(bool quitConfirmed)
 	{
 		_popupPanel.ConfirmationResponseAction -= HideExitConfirmationPopup;
 		_popupPanel.gameObject.SetActive(false);
+
 		if (quitConfirmed)
 		{
+#if UNITY_EDITOR
+			UnityEditor.EditorApplication.isPlaying = false;
+#endif
+
 			Application.Quit();
+
 		}
 		_mainMenuPanel.SetMenuScreen(_hasSaveData);
-
-
 	}
 	private void OnDestroy()
 	{
