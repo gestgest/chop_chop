@@ -83,7 +83,7 @@ public class QuestManagerSO : ScriptableObject
 
 	bool CheckQuestlineForQuestWithActor(ActorSO actorToCheckWith)
 	{
-		if (_currentQuest == null)//check if there's a current quest 
+		if (_currentQuest == null)//check if there's a current quest
 		{
 			if (_currentQuestline != null)
 			{
@@ -132,7 +132,7 @@ public class QuestManagerSO : ScriptableObject
 	//When Interacting with a character, we ask the quest manager if there's a quest that starts with a step with a certain character
 	void StartQuest(ActorSO actorToCheckWith)
 	{
-		if (_currentQuest != null)//check if there's a current quest 
+		if (_currentQuest != null)//check if there's a current quest
 		{
 			return;
 		}
@@ -235,7 +235,7 @@ public class QuestManagerSO : ScriptableObject
 	void EndDialogue(int dialogueType)
 	{
 
-		//depending on the dialogue that ended, do something 
+		//depending on the dialogue that ended, do something
 		switch ((DialogueType)dialogueType)
 		{
 			case DialogueType.CompletionDialogue:
@@ -284,7 +284,7 @@ public class QuestManagerSO : ScriptableObject
 	}
 
 	//퀘스트 완료 함수
-	void EndQuest() 
+	void EndQuest()
 	{
 		if (_currentQuest != null)
 		{
@@ -364,8 +364,6 @@ public class QuestManagerSO : ScriptableObject
 
 	public void SetFinishedQuestlineItemsFromSave(List<string> finishedItemsGUIds)
 	{
-
-
 		foreach (var questline in _questlines)
 		{
 			questline.IsDone = finishedItemsGUIds.Exists(o => o == questline.Guid);
@@ -383,7 +381,7 @@ public class QuestManagerSO : ScriptableObject
 
 			}
 		}
-		//Start Questline with the new data 
+		//Start Questline with the new data
 		StartQuestline();
 	}
 
@@ -410,7 +408,7 @@ public class QuestManagerSO : ScriptableObject
 		_currentQuestIndex = 0;
 		_currentQuestlineIndex = 0;
 		_currentStepIndex = 0;
-		//Start Questline with the new data 
+		//Start Questline with the new data
 		StartQuestline();
 	}
 

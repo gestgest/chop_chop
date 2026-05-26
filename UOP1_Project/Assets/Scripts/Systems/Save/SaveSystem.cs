@@ -6,8 +6,10 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 
 public class SaveSystem : ScriptableObject
 {
+	//listening on
 	[SerializeField] private VoidEventChannelSO _saveSettingsEvent = default;
 	[SerializeField] private LoadEventChannelSO _loadLocation = default;
+
 	[SerializeField] private InventorySO _playerInventory = default;
 	[SerializeField] private SettingsSO _currentSettings = default;
 	[SerializeField] private QuestManagerSO _questManagerSO = default;
@@ -56,10 +58,17 @@ public class SaveSystem : ScriptableObject
 	public IEnumerator LoadSavedInventory()
 	{
 		_playerInventory.Items.Clear();
+
+		//guid => 디스크에 있는 압축된 addressable =>
+		//데이터의 아이템 스택(guid만 있음)을 가져옴
 		foreach (var serializedItemStack in saveData._itemStacks)
 		{
-			var loadItemOperationHandle = Addressables.LoadAssetAsync<ItemSO>(serializedItemStack.itemGuid);
+			var loadItemOperationHandle =
+				Addressables.LoadAssetAsync<ItemSO>(serializedItemStack.itemGuid);
+
+			//불러올 때 까지 대기
 			yield return loadItemOperationHandle;
+
 			if (loadItemOperationHandle.Status == AsyncOperationStatus.Succeeded)
 			{
 				var itemSO = loadItemOperationHandle.Result;
@@ -81,7 +90,6 @@ public class SaveSystem : ScriptableObject
 		{
 			saveData._itemStacks.Add(new SerializedItemStack(itemStack.Item.Guid, itemStack.Amount));
 		}
-		//
 
 		saveData._finishedQuestlineItemsGUIds.Clear();
 		foreach (var item in _questManagerSO.GetFinishedQuestlineItemsGUIds())

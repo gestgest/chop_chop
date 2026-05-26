@@ -117,7 +117,8 @@ public class InputReader : DescriptionBaseSO, GameInput.IGameplayActions, GameIn
 	public void OnInteract(InputAction.CallbackContext context)
 	{
 		if ((context.phase == InputActionPhase.Performed)
-			&& (_gameStateManager.CurrentGameState == GameState.Gameplay)) // Interaction is only possible when in gameplay GameState
+			&& (_gameStateManager.CurrentGameState == GameState.Gameplay))
+			// Interaction is only possible when in gameplay GameState
 			InteractEvent.Invoke();
 	}
 

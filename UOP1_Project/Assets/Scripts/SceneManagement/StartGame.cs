@@ -9,6 +9,7 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 /// </summary>
 public class StartGame : MonoBehaviour
 {
+	//게임 시작할 때 나오는 초기 씬
 	[SerializeField] private GameSceneSO _locationsToLoad;
 	[SerializeField] private SaveSystem _saveSystem = default;
 	[SerializeField] private bool _showLoadScreen = default;
@@ -26,6 +27,7 @@ public class StartGame : MonoBehaviour
 
 	private void Start()
 	{
+
 		_hasSaveData = _saveSystem.LoadSaveDataFromDisk();
 		_onNewGameButton.OnEventRaised += StartNewGame;
 		_onContinueButton.OnEventRaised += ContinuePreviousGame;
@@ -49,6 +51,7 @@ public class StartGame : MonoBehaviour
 		_loadLocation.RaiseEvent(_locationsToLoad, _showLoadScreen); //씬 로드
 	}
 
+	//불러오기
 	private void ContinuePreviousGame()
 	{
 		StartCoroutine(LoadSaveGame());
@@ -61,10 +64,14 @@ public class StartGame : MonoBehaviour
 
 	private IEnumerator LoadSaveGame()
 	{
+		//인벤토리 가져오기
 		yield return StartCoroutine(_saveSystem.LoadSavedInventory());
 
+		//퀘스트 가져오기
 		_saveSystem.LoadSavedQuestlineStatus();
 		var locationGuid = _saveSystem.saveData._locationId;
+
+		//위치 비동기로 가져오기
 		var asyncOperationHandle = Addressables.LoadAssetAsync<LocationSO>(locationGuid);
 
 		yield return asyncOperationHandle;
@@ -72,7 +79,7 @@ public class StartGame : MonoBehaviour
 		if (asyncOperationHandle.Status == AsyncOperationStatus.Succeeded)
 		{
 			LocationSO locationSO = asyncOperationHandle.Result;
-			_loadLocation.RaiseEvent(locationSO, _showLoadScreen);
+			_loadLocation.RaiseEvent(locationSO, _showLoadScreen); //씬 불러오기
 		}
 	}
 }
